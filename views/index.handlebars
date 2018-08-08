@@ -1,0 +1,66 @@
+<div class="jumbotron" style="text-align: center">
+  <h1>Burger List</h1>
+  <input type="text" name="burgerName" id="burgerName" placeholder="Enter Burger Name">
+  <input type="submit" class="newBurger btn-success">
+</div>
+<div class="container">
+  <div class="grid">
+    <div class="row">
+      <div class="col">
+        <h1>Uneaten</h1>
+        <ul class="uneaten list-group">
+          {{#each burgers}} {{#unless this.devoured}}
+          <li class="burger{{this.id}} list-group-item" data-id={{this.id}}>{{this.burger_name}}
+            <button class="btn-primary devour" data-id={{this.id}}>Devour</button>
+          </li> {{/unless}} {{/each}}
+        </ul>
+      </div>
+      <div class="col">
+        <h1>eaten</h1>
+        <ul class="eaten list-group">
+          {{#each burgers}} {{#if this.devoured}}
+          <li class="burger{{this.id}} list-group-item" data-id={{this.id}}>{{this.burger_name}}
+          </li> {{/if}} {{/each}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  $(document).on("click", '.devour', function (e) {
+    var id = $(this).data("id")
+    console.log(id)
+    $.ajax({
+      url: '/update/' + id,
+      method: 'put',
+      data: { id: id, devoured: 1 },
+      success: function (res) {
+        console.log("updated, response: ")
+        var eatenBurger = $(`.burger${id}`);
+        eatenBurger.remove()
+        eatenBurger.children().remove()
+        $('.eaten').append(eatenBurger)
+      }
+    })
+  })
+
+  $(document).on("click", '.newBurger', function (e) {
+    e.preventDefault()
+    var burger_name = $('#burgerName').val()
+    $.ajax({
+      url: '/',
+      method: 'post',
+      data: { burger_name: burger_name, devoured: 0 },
+      success: function (res) {
+        console.log(res)
+        $(".uneaten").append(
+          `<li class="burger${res[1]}" data-id=${res[1]}>${res[0].burger_name}
+              <button class="devour" data-id=${res[1]}>Devour</button>
+            </li>`
+        )
+      }
+    })
+  })
+</script>
