@@ -56,11 +56,12 @@
       success: function (res) {
         console.log(res)
         $(".uneaten").append(
-          `<li class="burger${res[1]}" data-id=${res[1]}>${res[0].burger_name}
-              <button class="devour" data-id=${res[1]}>Devour</button>
+          `<li class="burger${res[1]} list-group-item" data-id=${res[1]}>${res[0].burger_name}
+              <button class="devour btn-primary" data-id=${res[1]}>Devour</button>
             </li>`
         )
       }
     })
+    $('#burgerName').val('')
   })
 </script>
